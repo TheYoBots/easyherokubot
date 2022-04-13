@@ -1,0 +1,37 @@
+{
+  "name": "hyperbot",
+  "version": "1.0.0",
+  "description": "hyper bot",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyperchessbot/hyperbot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hyperchessbot/hyperbot/issues"
+  },
+  "homepage": "https://github.com/hyperchessbot/hyperbot#readme",
+  "dependencies": {
+    "@easychessanimations/fetchutils": "^1.0.4",
+    "@easychessanimations/foo": "^1.0.43",
+    "@easychessanimations/lichessutils": "^1.0.21",
+    "@easychessanimations/polyglot": "^1.0.3",
+    "@easychessanimations/scalachess": "^1.0.10",
+    "@easychessanimations/sse": "^1.0.7",
+    "@easychessanimations/tinyutils": "^1.0.2",
+    "@easychessanimations/uci": "^1.0.33",
+    "chess.js": "^0.11.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.3",
+    "node-7z": "^2.1.2",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {}
+}
