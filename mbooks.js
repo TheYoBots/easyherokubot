@@ -24,7 +24,7 @@ const dbName = 'games'
 
 const { streamNdjson } = require('@easychessanimations/fetchutils')
 
-const BOT_NAME = process.env.BOT_NAME || "chesshyperbot"
+const BOT_NAME = process.env.BOT_NAME || "bot"
 const BOT_TOKEN = process.env.TOKEN
 
 const BOOK_DEPTH = parseInt(process.env.BOOK_DEPTH || "40")

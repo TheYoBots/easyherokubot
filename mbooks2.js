@@ -54,7 +54,7 @@ const MongoClient = require('mongodb').MongoClient
  
 const MONGODB_URI = process.env.MONGODB_URI
  
-const BOT_NAME = process.env.BOT_NAME || "chesshyperbot"
+const BOT_NAME = process.env.BOT_NAME || "bot"
 const BOT_TOKEN = process.env.TOKEN
 
 const BOOK_DEPTH = parseInt(process.env.BOOK_DEPTH || "40")

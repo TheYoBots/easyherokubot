@@ -1,22 +1,22 @@
 {
-  "name": "hyperbot",
+  "name": "easyherokubot",
   "version": "1.0.0",
-  "description": "hyper bot",
+  "description": "easy heroku bot",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hyperchessbot/hyperbot.git"
+    "url": "git+https://github.com/TheYoBots/easyherokubot.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hyperchessbot/hyperbot/issues"
+    "url": "https://github.com/TheYoBots/easyherokubot/issues"
   },
-  "homepage": "https://github.com/hyperchessbot/hyperbot#readme",
+  "homepage": "https://github.com/TheYoBots/easyherokubot#readme",
   "dependencies": {
     "@easychessanimations/fetchutils": "^1.0.4",
     "@easychessanimations/foo": "^1.0.43",

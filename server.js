@@ -49,12 +49,14 @@ if(MONGODB_URI){
 
 const fooVersion = '1.0.43'
 
-const lichessBotName = process.env.BOT_NAME || "chesshyperbot"
+const lichessBotName = process.env.BOT_NAME || "bot"
 
 const { isEnvTrue, formatTime, formatName, SECOND, MINUTE } = require('@easychessanimations/tinyutils')
 
 let envKeys = []
 
+const useStockfish14 = isEnvTrue('USE_STOCKFISH_14')
+envKeys.push('USE_STOCKFISH_14')
 const useStockfish13 = isEnvTrue('USE_STOCKFISH_13')
 envKeys.push('USE_STOCKFISH_13')
 const disableLogs = isEnvTrue('DISABLE_LOGS')
@@ -65,7 +67,7 @@ const incrementalUpdate = isEnvTrue('INCREMENTAL_UPDATE')
 envKeys.push('INCREMENTAL_UPDATE')
 const skipAfterFailed = parseInt(process.env.SKIP_AFTER_FAILED || "0")
 envKeys.push('SKIP_AFTER_FAILED')
-const appName = process.env.APP_NAME || "hyperchessbot"
+const appName = process.env.APP_NAME || "lichess-bot"
 envKeys.push('APP_NAME')
 const generalTimeout = parseInt(process.env.GENERAL_TIMEOUT || "15")
 envKeys.push('GENERAL_TIMEOUT')
@@ -75,12 +77,8 @@ const engineSkillLevel = process.env.ENGINE_SKILL_LEVEL || "20"
 envKeys.push('ENGINE_SKILL_LEVEL')
 const engineHash = process.env.ENGINE_HASH || "16"
 envKeys.push('ENGINE_HASH')
-const engineContempt = process.env.ENGINE_CONTEMPT || "24"
-envKeys.push('ENGINE_CONTEMPT')
 const engineMoveOverhead = process.env.ENGINE_MOVE_OVERHEAD || "500"
 envKeys.push('ENGINE_MOVE_OVERHEAD')
-const queryPlayingInterval = parseInt(process.env.QUERY_PLAYING_INTERVAL || "60")
-//envKeys.push('QUERY_PLAYING_INTERVAL')
 const allowPonder = isEnvTrue('ALLOW_PONDER')
 envKeys.push('ALLOW_PONDER')
 const useBook = isEnvTrue('USE_BOOK')
@@ -126,19 +124,15 @@ const disableBot = isEnvTrue('DISABLE_BOT')
 envKeys.push('DISABLE_BOT')
 const disableHuman = isEnvTrue('DISABLE_HUMAN')
 envKeys.push('DISABLE_HUMAN')
-const useNNUE = (process.env.USE_NNUE || "standard chess960 fromPosition").split(" ")
-envKeys.push('USE_NNUE')
-const useLc0 = isEnvTrue('USE_LC0')
-envKeys.push('USE_LC0')
 const usePolyglot = isEnvTrue('USE_POLYGLOT')
 envKeys.push('USE_POLYGLOT')
 const useSolution = isEnvTrue('USE_SOLUTION')
 envKeys.push('USE_SOLUTION')
-const welcomeMessage = process.env.WELCOME_MESSAGE || `coded by @hyperchessbotauthor`
+const welcomeMessage = process.env.WELCOME_MESSAGE || `coded by @YohaanSethNathan`
 envKeys.push('WELCOME_MESSAGE')
-const goodLuckMessage = process.env.GOOD_LUCK_MESSAGE || `Good luck !`
+const goodLuckMessage = process.env.GOOD_LUCK_MESSAGE || `Good luck!`
 envKeys.push('GOOD_LUCK_MESSAGE')
-const goodGameMessage = process.env.GOOD_GAME_MESSAGE || `Good game !`
+const goodGameMessage = process.env.GOOD_GAME_MESSAGE || `Good game!`
 envKeys.push('GOOD_GAME_MESSAGE')
 let disableSyzygy = isEnvTrue('DISABLE_SYZYGY')
 envKeys.push('DISABLE_SYZYGY')
@@ -178,12 +172,6 @@ if(fs.existsSync(syzygyPath)){
 	disableSyzygy = true
 }
 
-if(useLc0){
-	console.log(`syzygy is not enabled for Lc0`)
-	
-	disableSyzygy = true
-}
-
 console.log(`syzygy tablebases ${disableSyzygy ? "disabled" : "enabled"}`)
 
 let lastPlayedAt = 0
@@ -220,16 +208,9 @@ const fetch = require('node-fetch')
 
 let docs = null
 
-fetch(`https://raw.githubusercontent.com/hyperbotauthor/hyperbot/docs/docs.json`).then(response=>response.text().then(content=>{
+fetch(`https://raw.githubusercontent.com/TheYoBots/easyherokubot/docs/docs.json`).then(response=>response.text().then(content=>{
     try{
-        docs = JSON.parse(content)        
-		
-		fs.writeFileSync("README.md",
-			`# Welcome to Hyper Bot !\n` +
-			docs.sections.map(section=>Section(section)).join("\n") +
-			`\n## Config vars\n` +
-			EnvVars(docs.envvars)
-		)
+        docs = JSON.parse(content)
     }catch(err){console.log(err)}
 }))
 
@@ -241,8 +222,6 @@ const { makeUciMoves } = require("@easychessanimations/scalachess/lib/outopt.js"
 
 const { UciEngine, setLogEngine, AnalyzeJob } = require('@easychessanimations/uci')
 
-const LC0_EXE = (require('os').platform() == "win32") ? "lc0goorm/lc0.exe" : "lc0goorm/lc0"
-
 let stockfishPath = useScalachess ? 'stockfish12m' : 'stockfish12'
 
 if(useStockfish13){	
@@ -251,17 +230,15 @@ if(useStockfish13){
 	console.log(`using Stockfish 13 ( ${stockfishPath} )`)
 }
 
-const enginePath = useLc0 ? LC0_EXE : stockfishPath
+if(useStockfish14){	
+	stockfishPath = useScalachess ? 'stockfish14m' : 'stockfish14'
 
-const engine = new UciEngine(path.join(__dirname, enginePath))
+	console.log(`using Stockfish 14 ( ${stockfishPath} )`)
+}
+
+const engine = new UciEngine(path.join(__dirname, stockfishPath))
 
 const corrEngine = allowCorrespondence ? new UciEngine(path.join(__dirname, stockfishPath)) : null
-
-if(useLc0){
-	engine.setoption("Weights File", "weights.pb.gz")	
-	
-	engine.gothen({depth:1}).then(result => console.log(result))
-}
 
 const { Chess } = require('chess.js')
 
@@ -634,7 +611,7 @@ async function makeMove(gameId, state, moves, analyzejob, actualengine, failedLo
 			if(state.botTime < ( 15 * SECOND ) ) state.botTime = Math.floor(state.botTime * 0.75)	
 		}		
 		
-        logPage(`engine time ${state.botTime} ponder ${doPonder} thinking with ${engineThreads} thread(s) at skill level ${engineSkillLevel} using ${engineHash} hash and overhead ${engineMoveOverhead} with contempt ${engineContempt}`)
+        logPage(`engine time ${state.botTime} ponder ${doPonder} thinking with ${engineThreads} thread(s) at skill level ${engineSkillLevel} using ${engineHash} hash and overhead ${engineMoveOverhead}`)
 		
 		analyzejob.position(`fen ${state.initialFen}`, moves)
 		
@@ -775,7 +752,6 @@ function playGame(gameId){
 				.setoption("Threads", engineThreads)
 				.setoption("Skill Level", engineSkillLevel)
 				.setoption("Hash", engineHash)
-				.setoption("Contempt", engineContempt)
 				.setoption("Move Overhead", engineMoveOverhead)	
 				
 				actualengine = engine
@@ -825,22 +801,24 @@ function playGame(gameId){
 			
 			analyzejob = new AnalyzeJob()
 			
-			if(!useLc0){
-				analyzejob.setoption("UCI_Chess960", variant == "chess960" ? "true" : "false")
+			analyzejob.setoption("UCI_Chess960", variant == "chess960" ? "true" : "false")
 
-				if(useScalachess){
-					let uciVariant = ( variant == "threeCheck" ? "3check" : variant.toLowerCase() )
-					
-					if(lichessUtils.isStandard(variant)) uciVariant = "chess"
-					
-					analyzejob.setoption("UCI_Variant", uciVariant)				
-				}            
+			if(useScalachess){
+				let uciVariant = ( variant == "threeCheck" ? "3check" : variant.toLowerCase() )
 
-				analyzejob.setoption("Use NNUE", useNNUE.includes(variant) ? "true" : "false")
+				if(lichessUtils.isStandard(variant)) uciVariant = "chess"
 
-				analyzejob.setoption("SyzygyPath", ( (!disableSyzygy) && lichessUtils.isStandard(variant) ) ? syzygyPath : "<empty>")	
-			}
-        }
+				analyzejob.setoption("UCI_Variant", uciVariant)
+
+				if(uciVariant != "chess" && uciVariant != "chess960"){
+					analyzejob.setoption("EvalFile", "3check-313cc226a173.nnue:atomic-4ecb2067c716.nnue:crazyhouse-ca0dab479c68.nnue:horde-28173ddccabe.nnue:kingofthehill-2103ec0a1135.nnue:racingkings-8ede8541e245.nnue:")
+				}
+			}            
+
+			analyzejob.setoption("Use NNUE", "true");
+
+			analyzejob.setoption("SyzygyPath", ( (!disableSyzygy) && lichessUtils.isStandard(variant) ) ? syzygyPath : "<empty>")
+		}
 
         if(blob.type != "chatLine"){                			
 			if(playgameTimeout){
@@ -1089,7 +1067,7 @@ app.get('/', (req, res) => {
     <!doctype html>
     <html>
         <head>
-            <title>Hyper Bot</title>
+            <title>Easy Heroku Bot</title>
             <style>
             .p {
 				min-width: 900px;
@@ -1131,29 +1109,23 @@ app.get('/', (req, res) => {
 					showGame(id, fen, orientation, title, lastmove)
 				}
 			</script>
-            <h1>Welcome to Hyper Bot !</h1>            
-            <p class="p"><a href="https://lichess.org/@/${lichessBotName}" rel="noopener noreferrer" target="_blank">${lichessBotName}</a> is powered by Hyper Bot 
+            <h1>Welcome to Easy Heorku Bot !</h1>            
+            <p class="p"><a href="https://lichess.org/@/${lichessBotName}" rel="noopener noreferrer" target="_blank">${lichessBotName}</a> is running <a href="https://github.com/TheYoBots/easyherokubot" rel="noopener noreferrer" target="_blank">Easy Heroku Bot</a>!
             ( 
 			<a href="/chr" rel="noopener noreferrer" target="_blank" onclick="challengeRandom(event)">challenge random bot by ${lichessBotName}</a> |
-            <a href="/docs" rel="noopener noreferrer" target="_blank">view docs</a> | 
+            <a href="https://github.com/TheYoBots/easyherokubot" rel="noopener noreferrer" target="_blank">view source code</a> | 
 			<a href="/config" rel="noopener noreferrer" target="_blank">view config</a> |
 			<a href="https://scalachess.netlify.app/?app=${appName}" rel="noopener noreferrer" target="_blank">view book</a> |
 			<a href="/mongostats" rel="noopener noreferrer" target="_blank">mongostats</a>
 			)
             </p>
 			<p class="p">
-To upgrade an account, that has played no games yet, to bot, and to make this bot accept challenges and play games in your browser, visit <a href="https://hypereasy.herokuapp.com" rel="noopener noreferrer" target="_blank">Hyper Easy</a> . 
+To upgrade an account, that has played no games yet, to bot, visit <a href="https://lichess-bot-upgrader.herokuapp.com" rel="noopener noreferrer" target="_blank">lichess-bot-upgrader</a>, login with Lichess and Authorize, and then Click on 'Upgrade to a bot account'.
 
-For detailed instructions see <a href="https://lichess.org/forum/off-topic-discussion/hyper-easy-all-variants-lichess-bot-running-in-your-browser#1" rel="noopener noreferrer" target="_blank">this forum post</a> .
+For detailed instructions on Easy Heroku Bot see <a href="https://lichess.org/@/YohaanSethNathan/blog/easy-heroku-bot-improving-hyper-bot/miTywbyC" rel="noopener noreferrer" target="_blank">this blog post</a>.
 			</p>
             <p class="p" id="logBestmove" style="font-family: monospace;">feedback on random challenges and bot moves will be shown here ...</p>            
-			<div class="p" id="showGame" style="height:410px;font-family:monospace;text-align:center;">board of ongoing game will be shown here ...
-			<p style="font-family: Arial; font-size: 18px; color: #770;">
-Suggestion: To improve your bot performance, your Heroku server should be located in Europe. This can only be changed when creating an app, so if your server is not located in Europe, you have to create a new app and copy all config settings from your old app. It is recommended that you keep the old app, but turn off the old app's web dyno in the Resources tab and disconnect it from GitHub in the Deploy tab.
-			</p>
-			<p style="font-family: Arial; font-size: 18px; color: #700;">
-Warning: Playing while the bot home page is open introduces increased work load on the server. If in addition you use too high values for ENGINE_HASH ( recommended <= 128 ) and ENGINE_THREADS ( recommended <= 4 ), then Heroku rate limits may set in and temporarily disable the server, which will prevent the bot from making moves. If your priority is high rating or your bot is playing in a bot tournament, then close the bot homepage while playing. If your bot fails to move look at the Heroku logs ( More -> View logs ), and if you get memory quota exceeded error, then decrease ENGINE_THREADS and ENGINE_HASH. When the bot is hopelessly stuck, restart the app ( More -> Restart all dynos ).
-			</p>			
+			<div class="p" id="showGame" style="height:410px;font-family:monospace;text-align:center;">board of ongoing game will be shown here ...			
 			</div>
             <script>            
             function processSource(blob){
@@ -1463,7 +1435,7 @@ function watchPlayQueue(){
 }
 
 app.listen(port, _ => {
-    console.log(`Hyperbot listening on port ${port} !`)
+    console.log(`Easy Heroku Bot listening on port ${port} !`)
 
     if(disableLogs){
     	console.log(`logs disabled`)
