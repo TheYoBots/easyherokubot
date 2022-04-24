@@ -4,14 +4,13 @@
   "description": "easy heroku bot",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TheYoBots/easyherokubot.git"
   },
-  "keywords": [],
-  "author": "",
+  "author": "TheYoBots",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/TheYoBots/easyherokubot/issues"
@@ -32,6 +31,5 @@
     "mongodb": "^3.6.3",
     "node-7z": "^2.1.2",
     "node-fetch": "^2.6.1"
-  },
-  "devDependencies": {}
+  }
 }
