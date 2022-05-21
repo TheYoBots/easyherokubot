@@ -4,6 +4,10 @@ chmod +x stockfish13
 chmod +x stockfish13m
 chmod +x stockfish14
 chmod +x stockfish14m
+chmod +x stockfish14_1
+chmod +x stockfish14_1m
+chmod +x stockfish_dev
+chmod +x stockfishm_dev
 node mbooks.js &
 node mbooks2.js &
 node server.js

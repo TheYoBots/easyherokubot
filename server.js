@@ -55,10 +55,14 @@ const { isEnvTrue, formatTime, formatName, SECOND, MINUTE } = require('@easyches
 
 let envKeys = []
 
+const useStockfish14_1 = isEnvTrue('USE_STOCKFISH_14_1')
+envKeys.push('USE_STOCKFISH_14_1')
 const useStockfish14 = isEnvTrue('USE_STOCKFISH_14')
 envKeys.push('USE_STOCKFISH_14')
 const useStockfish13 = isEnvTrue('USE_STOCKFISH_13')
 envKeys.push('USE_STOCKFISH_13')
+const useStockfish12 = isEnvTrue('USE_STOCKFISH_12')
+envKeys.push('USE_STOCKFISH_12')
 const disableLogs = isEnvTrue('DISABLE_LOGS')
 envKeys.push('DISABLE_LOGS')
 const calcFen = (!(isEnvTrue('SKIP_FEN')))
@@ -222,7 +226,13 @@ const { makeUciMoves } = require("@easychessanimations/scalachess/lib/outopt.js"
 
 const { UciEngine, setLogEngine, AnalyzeJob } = require('@easychessanimations/uci')
 
-let stockfishPath = useScalachess ? 'stockfish12m' : 'stockfish12'
+let stockfishPath = useScalachess ? 'stockfishm_dev' : 'stockfishdev'
+
+if(useStockfish12){	
+	stockfishPath = useScalachess ? 'stockfish12m' : 'stockfish12'
+
+	console.log(`using Stockfish 12 ( ${stockfishPath} )`)
+}
 
 if(useStockfish13){	
 	stockfishPath = useScalachess ? 'stockfish13m' : 'stockfish13'
@@ -234,6 +244,12 @@ if(useStockfish14){
 	stockfishPath = useScalachess ? 'stockfish14m' : 'stockfish14'
 
 	console.log(`using Stockfish 14 ( ${stockfishPath} )`)
+}
+
+if(useStockfish14_1){	
+	stockfishPath = useScalachess ? 'stockfish14_1m' : 'stockfish14_1'
+
+	console.log(`using Stockfish 14.1 ( ${stockfishPath} )`)
 }
 
 const engine = new UciEngine(path.join(__dirname, stockfishPath))
