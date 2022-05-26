@@ -53,8 +53,8 @@ By default the latest version of [Stockfish](https://github.com/official-stockfi
 If you would like to change the engine used these are the accepted Config Vars for using older versions of the engine:
 - **USE_STOCKFISH_14_1** : Set it to 'true' to use [Stockfish 14.1](https://github.com/official-stockfish/Stockfish/releases/tag/sf_14.1) and [Fairy-Stockfish 14.0.1 XQ (for variants)](https://github.com/ianfab/Fairy-Stockfish/releases/tag/fairy_sf_14_0_1_xq) with NNUE.
 - **USE_STOCKFISH_14** : Set it to 'true' to use [Stockfish 14](https://github.com/official-stockfish/Stockfish/releases/tag/sf_14) and [Fairy-Stockfish 14 (for variants)](https://github.com/ianfab/Fairy-Stockfish/releases/tag/fairy_sf_14) with NNUE.
-- **USE_STOCKFISH_13** : Set it to 'true' to use [Stockfish 13 with NNUE](https://github.com/official-stockfish/Stockfish/releases/tag/sf_13) and [Multi-Variant Stockfish 13](https://github.com/ddugovic/Stockfish/commit/5d97fe2a3a64010d2bf18c2250af858ba121fe6a).
-- **USE_STOCKFISH_12** : Set it to 'true' to use [Stockfish 12 with NNUE](https://github.com/official-stockfish/Stockfish/releases/tag/sf_12) and [Multi-Variant Stockfish 12](https://github.com/ddugovic/Stockfish/commit/94f2fadfde66ea3e4f1c66a1f23e3050f6282b63).
+- **USE_STOCKFISH_13** : Set it to 'true' to use [Stockfish 13 with NNUE](https://github.com/official-stockfish/Stockfish/releases/tag/sf_13) and [Multi-Variant Stockfish 13 (for variants)](https://github.com/ddugovic/Stockfish/commit/5d97fe2a3a64010d2bf18c2250af858ba121fe6a).
+- **USE_STOCKFISH_12** : Set it to 'true' to use [Stockfish 12 with NNUE](https://github.com/official-stockfish/Stockfish/releases/tag/sf_12) and [Multi-Variant Stockfish 12 (for variants)](https://github.com/ddugovic/Stockfish/commit/94f2fadfde66ea3e4f1c66a1f23e3050f6282b63).
 
 These are the Engine options that you can set through Config Vars:
 - **ALLOW_PONDER** : Set it to 'true' to make the bot think on opponent time.
